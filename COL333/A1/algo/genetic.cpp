@@ -576,7 +576,6 @@ private:
         
         for (const auto& helicopter_plan : solution) {
             const Helicopter& helicopter = problem.helicopters[helicopter_plan.helicopter_id - 1];
-            Point home_city = problem.cities[helicopter.home_city_id - 1];
             
             double helicopter_total_distance = 0.0;
             
