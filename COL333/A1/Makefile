@@ -8,7 +8,7 @@ CHECKER_EXEC = format_checker
 
 # Source files for the main solver
 MAIN_SRCS = main.cpp io_handler.cpp solver.cpp
-ALGO_SRCS = algo/simulate.cpp algo/genetic.cpp
+ALGO_SRCS = algo/simulate.cpp algo/genetic.cpp algo/greedy.cpp
 
 # Source file for the checker
 CHECKER_SRCS = format_checker.cpp
@@ -40,9 +40,10 @@ $(CHECKER_EXEC): $(CHECKER_OBJS) io_handler.o
 # Specific dependencies for object files
 main.o: main.cpp structures.h solver.h io_handler.h
 io_handler.o: io_handler.cpp io_handler.h structures.h
-solver.o: solver.cpp solver.h structures.h algo/simulate.h algo/genetic.h
+solver.o: solver.cpp solver.h structures.h algo/simulate.h algo/genetic.h algo/greedy.h
 algo/simulate.o: algo/simulate.cpp algo/simulate.h structures.h
 algo/genetic.o: algo/genetic.cpp algo/genetic.h structures.h
+algo/greedy.o: algo/greedy.cpp algo/greedy.h structures.h
 format_checker.o: format_checker.cpp structures.h io_handler.h
 
 # Clean up build files
