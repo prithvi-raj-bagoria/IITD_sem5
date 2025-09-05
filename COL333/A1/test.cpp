@@ -390,11 +390,23 @@ std::vector<std::string> getAllFilesInDirectory(const std::string& directoryPath
     return files;
 }
 
-// Generate plot data in CSV format for visualization
+// Generate plot data in CSV format for visualization - Modified to append instead of overwrite
 void generatePlotData(const std::vector<TestResult>& results) {
-    std::ofstream plotDataFile("plot_data.csv");
-    plotDataFile << "TestCase,ObjectiveValue,ExecutionTime\n";
+    bool fileExists = fs::exists("plot_data.csv");
+    std::ofstream plotDataFile;
     
+    if (fileExists) {
+        // Open in append mode if file exists
+        plotDataFile.open("plot_data.csv", std::ios_base::app);
+        std::cout << "Appending to existing plot_data.csv" << std::endl;
+    } else {
+        // Create new file with header if doesn't exist
+        plotDataFile.open("plot_data.csv");
+        plotDataFile << "TestCase,ObjectiveValue,ExecutionTime\n";
+        std::cout << "Created new plot_data.csv" << std::endl;
+    }
+    
+    // Write the data for these test results
     for (const auto& result : results) {
         if (result.success) {
             std::string testCaseName = fs::path(result.inputFile).filename().string();

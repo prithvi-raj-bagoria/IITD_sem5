@@ -14,6 +14,27 @@ def shorten_test_case_name(name):
         return 'h' + name[4:]
     return name
 
+def get_difficulty_rank(name):
+    """Return a rank number for sorting by difficulty"""
+    if name.startswith('easy_'):
+        return 0
+    elif name.startswith('medium_'):
+        return 1
+    elif name.startswith('hard_'):
+        return 2
+    return 3  # Unknown goes at the end
+
+def get_case_number(name):
+    """Extract the case number from a test case name"""
+    parts = name.split('_')
+    if len(parts) >= 2:
+        # Extract number from the second part (e.g., "1.txt" -> 1)
+        try:
+            return int(parts[1].split('.')[0])
+        except ValueError:
+            return 999  # If extraction fails, put at the end
+    return 999  # Default high value for sorting
+
 def main():
     # Read the CSV data
     try:
@@ -29,8 +50,15 @@ def main():
     sns.set_style("whitegrid")
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     
-    # Sort by test case name
-    df = df.sort_values('TestCase')
+    # Add difficulty and case number columns for sorting
+    df['Difficulty'] = df['TestCase'].apply(get_difficulty_rank)
+    df['CaseNumber'] = df['TestCase'].apply(get_case_number)
+    
+    # Sort by difficulty first, then by case number
+    df = df.sort_values(['Difficulty', 'CaseNumber'])
+    
+    # Get shortened test case names
+    df['ShortName'] = df['TestCase'].apply(shorten_test_case_name)
     
     # Create a line plot with enhanced visibility
     ax = sns.lineplot(
@@ -50,8 +78,7 @@ def main():
     
     # Set x-tick positions and labels with better spacing
     tick_positions = range(len(df))
-    # Apply shortening to test case names
-    tick_labels = [shorten_test_case_name(name) for name in df['TestCase'].tolist()]
+    tick_labels = df['ShortName'].tolist()
     
     # If there are too many test cases, show only every nth label
     n = max(1, len(tick_labels) // 15)  # Show at most ~15 labels
@@ -62,6 +89,28 @@ def main():
         ha='right', 
         fontsize=10
     )
+    
+    # Add visual separators between difficulty levels
+    difficulty_changes = []
+    prev_diff = -1
+    for i, diff in enumerate(df['Difficulty']):
+        if diff != prev_diff:
+            difficulty_changes.append(i)
+            prev_diff = diff
+    
+    # Add vertical lines to separate difficulty groups
+    for pos in difficulty_changes[1:]:  # Skip the first one (start)
+        plt.axvline(x=pos-0.5, color='gray', linestyle='-', alpha=0.5)
+        
+    # Add difficulty labels at the top of the chart
+    diff_labels = ['Easy', 'Medium', 'Hard']
+    for i in range(len(difficulty_changes)):
+        start = difficulty_changes[i]
+        end = difficulty_changes[i+1] if i+1 < len(difficulty_changes) else len(df)
+        if end > start:
+            mid = (start + end) / 2
+            plt.text(mid, plt.ylim()[1] * 1.02, diff_labels[i], 
+                     ha='center', fontsize=14, fontweight='bold')
     
     # Add value labels with improved positioning
     for i, v in enumerate(df['ObjectiveValue']):

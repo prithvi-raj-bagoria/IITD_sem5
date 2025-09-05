@@ -48,7 +48,7 @@ double verifyAndCalculateScore(const string& input_file_path, const string& outp
         int num_trips;
         ss >> num_trips;
 
-        if (helicopter_id <= 0 || helicopter_id > data.helicopters.size()) {
+        if (helicopter_id <= 0 || helicopter_id > static_cast<int>(data.helicopters.size())) {
             cerr << "Error (Line " << line_num << "): Invalid helicopter ID " << helicopter_id << endl;
             return -1.0;
         }
@@ -81,7 +81,7 @@ double verifyAndCalculateScore(const string& input_file_path, const string& outp
                 trip_ss >> village_id >> vd >> vp >> vo;
                 total_d_dropped += vd; total_p_dropped += vp; total_o_dropped += vo;
 
-                if (village_id <= 0 || village_id > data.villages.size()) {
+                if (village_id <= 0 || village_id > static_cast<int>(data.villages.size())) {
                     cerr << "Error (Line " << line_num << "): Invalid village ID " << village_id << endl;
                     return -1.0;
                 }

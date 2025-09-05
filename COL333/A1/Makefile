@@ -1,5 +1,7 @@
 # Compiler and flags
-CXX = g++
+CXX = /usr/bin/g++-9
+# If the above doesn't work, try the full path:
+# CXX = /usr/bin/g++-9
 CXXFLAGS = -std=c++17 -Wall -O3
 
 # Executable names
@@ -21,8 +23,11 @@ MAIN_OBJS = $(MAIN_SRCS:.cpp=.o)
 CHECKER_OBJS = $(CHECKER_SRCS:.cpp=.o)
 TEST_OBJS = $(TEST_SRCS:.cpp=.o)
 
-# Default target - build everything
-all: $(EXEC) $(CHECKER_EXEC) $(TEST_EXEC)
+# Default target - build main and checker only (without test)
+all: $(EXEC) $(CHECKER_EXEC)
+
+# Build everything including test
+everything: all test
 
 # Rule to link the main solver program
 $(EXEC): $(MAIN_OBJS)
@@ -32,7 +37,9 @@ $(EXEC): $(MAIN_OBJS)
 $(CHECKER_EXEC): $(CHECKER_OBJS) io_handler.o
 	$(CXX) $(CXXFLAGS) -o $(CHECKER_EXEC) $(CHECKER_OBJS) io_handler.o
 
-# Rule to build the test executable
+# Rule to build the test executable - now separate from 'all'
+test: $(TEST_EXEC)
+
 $(TEST_EXEC): $(TEST_OBJS) io_handler.o solver.o
 	$(CXX) $(CXXFLAGS) -o $(TEST_EXEC) $(TEST_OBJS) io_handler.o solver.o
 
@@ -53,9 +60,14 @@ clean:
 	rm -f temp_format_checker_output.txt statistics.txt plot_data.csv objective_values.png
 	rm -rf input output *.txt
 
+# Clean just test-related files
+clean-test:
+	rm -f $(TEST_EXEC) $(TEST_OBJS)
+	rm -f statistics.txt plot_data.csv objective_values.png
+	rm -rf input output
 
 # Create plot of results
 plot:
 	python3 plot_results.py
 
-.PHONY: all clean distclean prepare run runtest check plot
+.PHONY: all everything clean clean-test test plot
