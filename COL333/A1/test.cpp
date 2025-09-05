@@ -205,7 +205,7 @@ TestResult runMain(const std::string& inputFile) {
     auto start = std::chrono::high_resolution_clock::now();
     
     // Execute main program - removed "./" prefix for Windows compatibility
-    std::string command = "main " + inputFile + " " + result.outputFile;
+    std::string command = "./main " + inputFile + " " + result.outputFile;
     int exitCode = std::system(command.c_str());
     
     auto end = std::chrono::high_resolution_clock::now();
@@ -231,7 +231,7 @@ void runFormatChecker(TestResult& result) {
     // Create a temporary file to capture the format checker output
     std::string tempFile = "temp_format_checker_output.txt";
     // Removed "./" prefix for Windows compatibility
-    std::string command = "format_checker " + result.inputFile + " " + result.outputFile + " > " + tempFile;
+    std::string command = "./format_checker " + result.inputFile + " " + result.outputFile + " > " + tempFile;
     
     int exitCode = std::system(command.c_str());
     
@@ -428,7 +428,7 @@ std::vector<TestResult> processBatchFiles(const std::string& inputDir, const std
         
         // Run the main solver
         auto start = std::chrono::high_resolution_clock::now();
-        std::string command = "main " + result.inputFile + " " + result.outputFile;
+        std::string command = "./main " + result.inputFile + " " + result.outputFile;
         int exitCode = std::system(command.c_str());
         auto end = std::chrono::high_resolution_clock::now();
         
@@ -539,8 +539,8 @@ int main(int argc, char* argv[]) {
                 results.push_back(result);
             }
             
-            // Write statistics
-            writeStatistics(results);
+            // Write enhanced statistics (this will also generate plot_data.csv)
+            writeEnhancedStatistics(results);
             
         } else {
             // New batch processing mode

@@ -2,12 +2,6 @@
 #include <iostream>
 #include <chrono>
 
-
-//Algorithm
-#include "algo/simulate.h"
-#include "algo/genetic.h"
-#include "algo/greedy.h"
-
 using namespace std;
 // You can add any helper functions or classes you need here.
 
@@ -519,6 +513,9 @@ Trip createMultiVillageTripPlan(const Helicopter& helicopter, const ProblemData&
     // If no suitable villages found, return empty trip
     if (village_batch.empty()) {
         Trip empty_trip;
+        empty_trip.dry_food_pickup = 0;
+        empty_trip.perishable_food_pickup = 0;
+        empty_trip.other_supplies_pickup = 0;
         return empty_trip;
     }
     
