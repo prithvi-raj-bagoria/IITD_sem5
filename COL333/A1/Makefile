@@ -1,5 +1,5 @@
 # Compiler and flags
-CXX = /usr/bin/g++-9
+# CXX = /usr/bin/g++-9
 # If the above doesn't work, try the full path:
 # CXX = /usr/bin/g++-9
 CXXFLAGS = -std=c++17 -Wall -O3
